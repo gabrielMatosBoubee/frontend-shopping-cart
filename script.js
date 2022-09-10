@@ -3,6 +3,10 @@
 
 // Fique a vontade para modificar o código já escrito e criar suas próprias funções!
 
+const items = document.querySelector('.items');
+
+const ol = document.querySelector('.cart__items');
+// const itemId = 
 /**
  * Função responsável por criar e retornar o elemento de imagem do produto.
  * @param {string} imageSource - URL da imagem.
@@ -54,7 +58,7 @@ const createProductItemElement = ({ id, title, thumbnail }) => {
  * @param {Element} product - Elemento do produto.
  * @returns {string} ID do produto.
  */
-const getIdFromProductItem = (product) => product.querySelector('span.id').innerText;
+const getIdFromProductItem = (product) => product.querySelector('span.item_id').innerText;
 
 /**
  * Função responsável por criar e retornar um item do carrinho.
@@ -68,8 +72,28 @@ const createCartItemElement = ({ id, title, price }) => {
   const li = document.createElement('li');
   li.className = 'cart__item';
   li.innerText = `ID: ${id} | TITLE: ${title} | PRICE: $${price}`;
-  li.addEventListener('click', cartItemClickListener);
+  // li.addEventListener('click', cartItemClickListener);
   return li;
 };
-
-window.onload = () => { };
+// fetchItem('123').then(console.log);
+const abobo = async () => {
+  // fetchProducts('computador').then(({ results }) =>
+  // results.map((e) => items.appendChild(createProductItemElement(e))));
+  const { results } = await fetchProducts('computador');
+  return results.map((e) => items.appendChild(createProductItemElement(e)));
+}; 
+const clickBottun = async (click) => {
+  console.log('deu certo');
+};
+async function addCarrinho() {
+  const botton = document.querySelectorAll('.item__add');
+  botton.forEach(async (element, index) =>
+   element.addEventListener('click', async () => ol.appendChild(createCartItemElement(
+    await fetchItem(getIdFromProductItem(document.querySelectorAll('.item')[index])),
+))));
+  }
+// item.addEventListener('click', async () =>
+// ol.appendChild(createCartItemElement(
+  // await fetchItem(document.querySelector('.item_id').innerText),
+  // )));
+  window.onload = async () => { await abobo(); await addCarrinho(); };
