@@ -86,9 +86,6 @@ const adicionaOsProdutos = async () => {
   const { results } = await fetchProducts('computador');
   return results.map((e) => items.appendChild(createProductItemElement(e)));
 }; 
-const clickBottun = async (click) => {
-  console.log('deu certo');
-};
  const addCarrinho = async () => {
   const botton = document.querySelectorAll('.item__add');
   botton.forEach(async (element, index) =>
