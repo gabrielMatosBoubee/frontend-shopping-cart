@@ -68,15 +68,19 @@ const getIdFromProductItem = (product) => product.querySelector('span.item_id').
  * @param {string} product.price - Preço do produto.
  * @returns {Element} Elemento de um item do carrinho.
  */
-const createCartItemElement = ({ id, title, price }) => {
+const createCartItemElement = ({ id, title, price, thumbnail }) => {
   const li = document.createElement('li');
   li.className = 'cart__item';
   li.innerText = `ID: ${id} | TITLE: ${title} | PRICE: $${price}`;
-  // li.addEventListener('click', cartItemClickListener);
+  const img = document.createElement('img');
+  img.className = 'imagem_cart';
+  img.src = thumbnail;
+  tes = li.appendChild(img);
+  li.addEventListener('click', () => li.remove());
   return li;
 };
 // fetchItem('123').then(console.log);
-const abobo = async () => {
+const adicionaOsProdutos = async () => {
   // fetchProducts('computador').then(({ results }) =>
   // results.map((e) => items.appendChild(createProductItemElement(e))));
   const { results } = await fetchProducts('computador');
@@ -85,15 +89,14 @@ const abobo = async () => {
 const clickBottun = async (click) => {
   console.log('deu certo');
 };
-async function addCarrinho() {
+ const addCarrinho = async () => {
   const botton = document.querySelectorAll('.item__add');
   botton.forEach(async (element, index) =>
    element.addEventListener('click', async () => ol.appendChild(createCartItemElement(
     await fetchItem(getIdFromProductItem(document.querySelectorAll('.item')[index])),
 ))));
-  }
-// item.addEventListener('click', async () =>
-// ol.appendChild(createCartItemElement(
-  // await fetchItem(document.querySelector('.item_id').innerText),
-  // )));
-  window.onload = async () => { await abobo(); await addCarrinho(); };
+  };
+  window.onload = async () => {
+ await adicionaOsProdutos();
+     await addCarrinho(); 
+};
