@@ -4,8 +4,12 @@
 // Fique a vontade para modificar o código já escrito e criar suas próprias funções!
 
 const items = document.querySelector('.items');
-
-const ol = document.querySelector('.cart__items');
+const recuperaOl = () => { 
+  const ol = document.querySelector('.cart__items');
+  return ol; 
+};
+// const cart = document.querySelector('.cart').firstChild;
+// console.log(cart);
 // const itemId = 
 /**
  * Função responsável por criar e retornar o elemento de imagem do produto.
@@ -75,8 +79,11 @@ const createCartItemElement = ({ id, title, price, thumbnail }) => {
   const img = document.createElement('img');
   img.className = 'imagem_cart';
   img.src = thumbnail;
-  tes = li.appendChild(img);
-  li.addEventListener('click', () => li.remove());
+  li.appendChild(img);
+  li.addEventListener('click', () => {
+    li.remove();
+    saveCartItems(recuperaOl().innerHTML);
+  });
   return li;
 };
 // fetchItem('123').then(console.log);
@@ -86,14 +93,50 @@ const adicionaOsProdutos = async () => {
   const { results } = await fetchProducts('computador');
   return results.map((e) => items.appendChild(createProductItemElement(e)));
 }; 
- const addCarrinho = async () => {
+const addCarrinho = async () => {
   const botton = document.querySelectorAll('.item__add');
-  botton.forEach(async (element, index) =>
-   element.addEventListener('click', async () => ol.appendChild(createCartItemElement(
+  botton.forEach(async (element, index) => {
+  element.addEventListener('click', async () => {
+ recuperaOl().append(createCartItemElement(
     await fetchItem(getIdFromProductItem(document.querySelectorAll('.item')[index])),
-))));
+    ));
+    saveCartItems(recuperaOl().innerHTML); 
+});
+});
+// recuperaOl().append({ li } = getSavedCartItems());
+    // console.log(recuperaOl());
+  };
+//   const test = () => {
+
+// if (filho !== null) {
+//   console.log('O elemento #filho existe em #pai');
+// } else {
+//   console.log('O elemento #filho não existe em #pai');
+// }
+//   };
+  const apagarReset = () => {
+    const li = document.querySelectorAll('.cart__item');
+  if (li.length > 1) {
+  li.forEach((element, index) => element.addEventListener('click', () => {
+      document.querySelectorAll('.cart__item')[index].remove();
+      saveCartItems(recuperaOl().innerHTML);
+    }));
+  } else {
+    document.querySelector('.cart__item').addEventListener('click', () => 
+    document.querySelector('.cart__item').remove());
+    saveCartItems(recuperaOl().innerHTML)
+  }
   };
   window.onload = async () => {
- await adicionaOsProdutos();
-     await addCarrinho(); 
-};
+  await adicionaOsProdutos();
+    await addCarrinho(); 
+    if (getSavedCartItems()) {
+    recuperaOl().innerHTML = getSavedCartItems();
+    apagarReset();
+  }
+    // if (getSavedCartItems()) {
+      
+    // };
+  };
+  
+  // getSavedCartItems('cartItems');
