@@ -100,6 +100,14 @@ const getIdFromProductItem = (product) => product.querySelector('span.item_id').
   return soma.toFixed(2);
   // const resultado = li.forEach((element) => element.innerText.split('$')[1]); 
 };
+const constApagaTudo = (li) => {
+  const limpar = document.querySelector('.empty-cart');
+  limpar.addEventListener('click', () => {
+  li.remove();
+  adicionaValorTotal(todosOsPreços());
+  saveCartItems('');
+ }); 
+};
 const createCartItemElement = ({ id, title, price, thumbnail }) => {
   const li = document.createElement('li');
   li.className = 'cart__item';
@@ -113,6 +121,7 @@ const createCartItemElement = ({ id, title, price, thumbnail }) => {
     adicionaValorTotal(todosOsPreços());
     saveCartItems(recuperaOl().innerHTML);
   });
+  constApagaTudo(li);
   return li;
 };
 // fetchItem('123').then(console.log);
@@ -156,13 +165,13 @@ const addCarrinho = async () => {
     //     localStorage.setItem('cartItems', recuperaOl().innerHTML);
     //   }); 
     // }
+    li.forEach((e) => constApagaTudo(e));
   li.forEach((element) => element.addEventListener('click', () => {
       element.remove();
       adicionaValorTotal(todosOsPreços());
       saveCartItems(recuperaOl().innerHTML);
     }));
   };
-  
   // todosOsPreços().then(console.log);
   window.onload = async () => {
   await adicionaOsProdutos();
@@ -171,5 +180,5 @@ const addCarrinho = async () => {
       recuperaOl().innerHTML = getSavedCartItems();
       apagarReset();
     }
-    adicionaValorTotal(todosOsPreços()); 
-  };
+    adicionaValorTotal(todosOsPreços());
+  }; 
