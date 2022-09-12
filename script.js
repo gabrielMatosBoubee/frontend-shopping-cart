@@ -172,9 +172,22 @@ const addCarrinho = async () => {
       saveCartItems(recuperaOl().innerHTML);
     }));
   };
+   const criaLoading = () => {
+   const loading = document.createElement('div');
+   loading.className = 'loading';
+   loading.innerText = 'carregando...';
+   const main = document.querySelector('.items');
+   return main.append(loading);
+   };
+   const removeLoading = () => {
+     const loading = document.querySelector('.loading');
+     return loading.remove();
+   };
   // todosOsPreços().then(console.log);
   window.onload = async () => {
+    criaLoading();
   await adicionaOsProdutos();
+  removeLoading();
     await addCarrinho(); 
     if (getSavedCartItems()) {
       recuperaOl().innerHTML = getSavedCartItems();
