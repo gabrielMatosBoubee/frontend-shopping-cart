@@ -54,13 +54,14 @@ const createCustomElement = (element, className, innerText) => {
  * @param {string} product.thumbnail - URL da imagem do produto.
  * @returns {Element} Elemento de produto.
  */
-const createProductItemElement = ({ id, title, thumbnail }) => {
+const createProductItemElement = ({ id, title, thumbnail, price }) => {
   const section = document.createElement('section');
   section.className = 'item';
 
   section.appendChild(createCustomElement('span', 'item_id', id));
   section.appendChild(createCustomElement('span', 'item__title', title));
   section.appendChild(createProductImageElement(thumbnail));
+  section.appendChild(createCustomElement('span', 'item__price', `R$ ${price}`));
   section.appendChild(createCustomElement('button', 'item__add', 'Adicionar ao carrinho!'));
 
   return section;
@@ -83,21 +84,25 @@ const getIdFromProductItem = (product) => product.querySelector('span.item_id').
  */
  const adicionaValorTotal = (price) => {
   div.className = 'total-price';
-  div.innerText = `Subtotal: R$${price}`;
+  div.innerText = `Total: R$${price}`;
  };
  const todosOsPreços = () => {
   const li = document.querySelectorAll('.cart__item');
   let soma = 0;
+  let somaFixed = {};
+  let valorFinal = '0,00';
   for (let index = 0; index < li.length; index += 1) {
   //  console.log(li.length);      
-  if (li) {
-      // console.log(li[index].innerText.split('$')[1]);
-    const resultado = li[index].innerText.split('$')[1];
-    const resultadoNumerico = Number(resultado);
-    soma += resultadoNumerico;
-  } 
+    if (li) {
+        // console.log(li[index].innerText.split('$')[1]);
+      const resultado = li[index].innerText.split('$')[1];
+      const resultadoNumerico = Number(resultado);
+      soma += resultadoNumerico;
+      somaFixed = soma.toFixed(2);
+      valorFinal = String(somaFixed).replace('.', ',');
+    } 
   }
-  return soma.toFixed(2);
+  return valorFinal;
   // const resultado = li.forEach((element) => element.innerText.split('$')[1]); 
 };
 const constApagaTudo = (li) => {
@@ -108,10 +113,12 @@ const constApagaTudo = (li) => {
   saveCartItems('');
  }); 
 };
-const createCartItemElement = ({ id, title, price, thumbnail }) => {
+const createCartItemElement = ({ title, price, thumbnail }) => {
   const li = document.createElement('li');
   li.className = 'cart__item';
-  li.innerText = `ID: ${id} | TITLE: ${title} | PRICE: $${price}`;
+  li.innerText = `${title} 
+  
+  R$${price}`;
   const img = document.createElement('img');
   img.className = 'imagem_cart';
   img.src = thumbnail;
@@ -124,25 +131,23 @@ const createCartItemElement = ({ id, title, price, thumbnail }) => {
   constApagaTudo(li);
   return li;
 };
-// fetchItem('123').then(console.log);
+
 const adicionaOsProdutos = async () => {
-  // fetchProducts('computador').then(({ results }) =>
-  // results.map((e) => items.appendChild(createProductItemElement(e))));
   const { results } = await fetchProducts('computador');
-  return results.map((e) => items.appendChild(createProductItemElement(e)));
-}; 
+  const catalogoDeProdutos = results.map((e) => items.appendChild(createProductItemElement(e)));
+  return catalogoDeProdutos;
+};
+
 const addCarrinho = async () => {
-  const botton = document.querySelectorAll('.item__add');
-  botton.forEach(async (element, index) => {
+  const bottons = document.querySelectorAll('.item__add');
+  bottons.forEach(async (element, index) => {
   element.addEventListener('click', async () => {
- recuperaOl().append(createCartItemElement(
-    await fetchItem(getIdFromProductItem(document.querySelectorAll('.item')[index])),
-    ));
-//     adicionaValorTotal(
-//       await fetchItem(getIdFromProductItem(document.querySelectorAll('.item')[index])),
-// );
-    adicionaValorTotal(todosOsPreços());
-    saveCartItems(recuperaOl().innerHTML); 
+    const getItemId = getIdFromProductItem(document.querySelectorAll('.item')[index]);
+    const pegaOLinkDoProduto = await fetchItem(getItemId);
+    const criaALi = createCartItemElement(pegaOLinkDoProduto);
+      recuperaOl().append(criaALi);
+      adicionaValorTotal(todosOsPreços());
+      saveCartItems(recuperaOl().innerHTML); 
 });
 });
 // recuperaOl().append({ li } = getSavedCartItems());
@@ -183,15 +188,22 @@ const addCarrinho = async () => {
      const loading = document.querySelector('.loading');
      return loading.remove();
    };
+   const verificaLocalStorage = () => {
+    if (getSavedCartItems()) {
+      recuperaOl().innerHTML = getSavedCartItems();
+      apagarReset();
+    }
+   };
+  // localStorage.setItem('test', document.querySelector('.cart__items'));
+  // localStorage.getItem('test');
   // todosOsPreços().then(console.log);
   window.onload = async () => {
     criaLoading();
   await adicionaOsProdutos();
   removeLoading();
-    await addCarrinho(); 
-    if (getSavedCartItems()) {
-      recuperaOl().innerHTML = getSavedCartItems();
-      apagarReset();
-    }
+    addCarrinho(); 
+    verificaLocalStorage();
     adicionaValorTotal(todosOsPreços());
   }; 
+
+  // Promise.all([fetchProducts('computador'), fetchItem('MLB2197308438')]).then(console.log);
